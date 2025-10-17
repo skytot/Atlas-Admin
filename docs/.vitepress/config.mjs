@@ -5,6 +5,7 @@ export default defineConfig({
   description: 'Atlas Admin - 大型管理平台脚手架文档',
   lang: 'zh-CN',
   lastUpdated: true,
+  base: '/Atlas-Admin/',
   srcDir: '.',
   vite: {
     resolve: {
@@ -27,7 +28,7 @@ export default defineConfig({
     /.*tests\/README.*/
   ],
   head: [
-    ['link', { rel: 'icon', href: '../public/favicon.ico' }],
+    ['link', { rel: 'icon', href: '/Atlas-Admin/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#3eaf7c' }],
     ['meta', { name: 'mobile-web-app-capable', content: 'yes' }],
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
@@ -35,8 +36,8 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: {
-      light: '/logo.svg',
-      dark: '/logo-dark.svg',
+      light: '/Atlas-Admin/logo.svg',
+      dark: '/Atlas-Admin/logo-dark.svg',
       alt: 'Atlas Admin'
     },
     siteTitle: 'Atlas Admin Docs',
