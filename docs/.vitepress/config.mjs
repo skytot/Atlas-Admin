@@ -28,7 +28,7 @@ export default defineConfig({
     /.*tests\/README.*/
   ],
   head: [
-    ['link', { rel: 'icon', href: '/Atlas-Admin/favicon.ico' }],
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#3eaf7c' }],
     ['meta', { name: 'mobile-web-app-capable', content: 'yes' }],
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
@@ -36,8 +36,8 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: {
-      light: '/Atlas-Admin/logo.svg',
-      dark: '/Atlas-Admin/logo-dark.svg',
+      light: '/logo.svg',
+      dark: '/logo-dark.svg',
       alt: 'Atlas Admin'
     },
     siteTitle: 'Atlas Admin Docs',
