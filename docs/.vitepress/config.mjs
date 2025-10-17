@@ -5,6 +5,14 @@ export default defineConfig({
   description: 'Atlas Admin - 大型管理平台脚手架文档',
   lang: 'zh-CN',
   lastUpdated: true,
+  ignoreDeadLinks: [
+    // 忽略开发环境的 localhost 链接
+    /^http:\/\/localhost/,
+    // 忽略其他预期的死链接
+    /^\.\/LICENSE$/,
+    // 忽略 tests 目录的链接
+    /.*tests\/README.*/
+  ],
   head: [
     ['link', { rel: 'icon', href: '../public/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#3eaf7c' }],

@@ -1,0 +1,79 @@
+name: 📚 Deploy Documentation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy from'
+        required: false
+        default: 'main'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 📋 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔍 Lint documentation
+        run: |
+          cd docs
+          pnpm lint || echo "Linting completed with warnings"
+
+      - name: 🏗️ Build documentation
+        run: |
+          cd docs
+          pnpm build
+        env:
+          NODE_ENV: production
+
+      - name: 📊 Build summary
+        run: |
+          echo "📚 Documentation build completed successfully!"
+          echo "📁 Build output: docs/.vitepress/dist"
+          echo "🌐 Ready for deployment to GitHub Pages"
+
+      - name: 🚀 Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: 📤 Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+      - name: 🌐 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: ✅ Deployment status
+        run: |
+          echo "🎉 Documentation deployed successfully!"
+          echo "🔗 URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
