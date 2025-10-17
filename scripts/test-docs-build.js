@@ -36,16 +36,25 @@ if (!fs.existsSync('docs')) {
 
 console.log('\n📦 安装依赖...')
 try {
-  execSync('pnpm install --frozen-lockfile', { stdio: 'inherit' })
+  execSync('npm ci', { stdio: 'inherit' })
   console.log('✅ 依赖安装成功')
 } catch (error) {
   console.log('❌ 依赖安装失败:', error.message)
   process.exit(1)
 }
 
+console.log('\n📦 安装文档依赖...')
+try {
+  execSync('cd docs && npm ci', { stdio: 'inherit' })
+  console.log('✅ 文档依赖安装成功')
+} catch (error) {
+  console.log('❌ 文档依赖安装失败:', error.message)
+  process.exit(1)
+}
+
 console.log('\n🏗️ 构建文档...')
 try {
-  execSync('cd docs && pnpm build', { stdio: 'inherit' })
+  execSync('cd docs && npm run build', { stdio: 'inherit' })
   console.log('✅ 文档构建成功')
 } catch (error) {
   console.log('❌ 文档构建失败:', error.message)

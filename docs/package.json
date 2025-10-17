@@ -1,0 +1,15 @@
+{
+  "name": "atlas-admin-docs",
+  "version": "1.2.0",
+  "description": "Atlas Admin Documentation",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "lint": "echo 'No linting configured for docs'"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
