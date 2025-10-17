@@ -10,6 +10,9 @@
     "lint": "echo 'No linting configured for docs'"
   },
   "devDependencies": {
-    "vitepress": "^1.6.4"
+    "vitepress": "^1.6.4",
+    "postcss": "^8.5.6",
+    "postcss-preset-env": "^9.4.0",
+    "cssnano": "^7.1.1"
   }
 }

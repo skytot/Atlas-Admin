@@ -42,7 +42,7 @@ jobs:
       - name: 📋 Install docs dependencies
         run: |
           cd docs
-          pnpm install
+          pnpm install --frozen-lockfile
 
       - name: 🔍 Lint documentation
         run: |
