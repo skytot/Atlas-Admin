@@ -1,11 +1,3 @@
----
-head:
-  - - link
-    - rel: icon
-    - type: image/x-icon
-    - href: /favicon.ico
----
-
 # 🧪 测试文档
 
 > Atlas Admin 测试文档中心

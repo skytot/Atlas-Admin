@@ -1,11 +1,3 @@
----
-head:
-  - - link
-    - rel: icon
-    - type: image/x-icon
-    - href: /favicon.ico
----
-
 # 状态管理
 
 状态管理模块基于Pinia，采用单一数据源架构，UserStore作为纯消费端，从Auth模块获取状态数据。

@@ -10,9 +10,6 @@ export default {
       stage: 3,
       features: {
         'nesting-rules': true,
-        'custom-properties': {
-          preserve: isProduction ? false : true
-        }
       },
       autoprefixer: {
         flexbox: 'no-2009'
