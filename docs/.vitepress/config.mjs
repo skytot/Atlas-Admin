@@ -5,6 +5,19 @@ export default defineConfig({
   description: 'Atlas Admin - 大型管理平台脚手架文档',
   lang: 'zh-CN',
   lastUpdated: true,
+  srcDir: '.',
+  vite: {
+    resolve: {
+      alias: {
+        '@': '/docs'
+      }
+    },
+    build: {
+      rollupOptions: {
+        external: ['vue/server-renderer']
+      }
+    }
+  },
   ignoreDeadLinks: [
     // 忽略开发环境的 localhost 链接
     /^http:\/\/localhost/,
