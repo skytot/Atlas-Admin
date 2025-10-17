@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*", "env.d.ts", "auto-imports.d.ts", "components.d.ts"],
+  "exclude": ["node_modules", "dist", "src/**/__tests__/*", "src/scripts"],
+  "compilerOptions": {
+    "composite": true,
+    "types": ["vite/client"]
+  }
+}

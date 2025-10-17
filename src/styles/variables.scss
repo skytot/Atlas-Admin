@@ -1,0 +1,56 @@
+// 颜色变量
+$primary-color: #409eff !default;
+$success-color: #67c23a !default;
+$warning-color: #e6a23c !default;
+$danger-color: #f56c6c !default;
+$info-color: #909399 !default;
+
+// 文字颜色
+$text-primary: #303133 !default;
+$text-regular: #606266 !default;
+$text-secondary: #909399 !default;
+$text-placeholder: #c0c4cc !default;
+
+// 边框颜色
+$border-base: #dcdfe6 !default;
+$border-light: #e4e7ed !default;
+$border-lighter: #ebeef5 !default;
+$border-extra-light: #f2f6fc !default;
+
+// 背景颜色
+$bg-color: #ffffff !default;
+$bg-color-page: #f2f3f5 !default;
+$bg-color-overlay: rgba(0, 0, 0, 0.8) !default;
+
+// 尺寸变量
+$border-radius-base: 4px !default;
+$border-radius-small: 2px !default;
+$border-radius-large: 8px !default;
+
+// 间距变量
+$spacing-xs: 4px !default;
+$spacing-sm: 8px !default;
+$spacing-md: 16px !default;
+$spacing-lg: 24px !default;
+$spacing-xl: 32px !default;
+
+// 字体大小
+$font-size-xs: 12px !default;
+$font-size-sm: 14px !default;
+$font-size-base: 16px !default;
+$font-size-lg: 18px !default;
+$font-size-xl: 20px !default;
+
+// 阴影
+$box-shadow-base:
+  0 2px 4px rgba(0, 0, 0, 0.12),
+  0 0 6px rgba(0, 0, 0, 0.04) !default;
+$box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1) !default;
+
+// 动画
+$transition-base: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !default;
+$transition-fade: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1) !default;
+$transition-md-fade:
+  transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+  opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1) !default;
+$transition-slow-fade: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1) !default;

@@ -1,0 +1,22 @@
+{
+  "include": [
+    "eslint.config.js",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "src/scripts/**/*.ts",
+    "src/scripts/**/*.js"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2020",
+    "allowJs": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noEmit": true,
+    "types": ["node"]
+  }
+}

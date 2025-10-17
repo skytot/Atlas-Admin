@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.app.json",
+  "include": [
+    "../env.d.ts",
+    "../auto-imports.d.ts",
+    "../components.d.ts",
+    "../src/**/*.ts",
+    "./**/*.ts",
+    "./**/*.tsx"
+  ],
+  "compilerOptions": {
+    "types": ["vitest/globals"]
+  }
+}
+
+
