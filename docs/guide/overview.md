@@ -1,12 +1,34 @@
 # 项目综述
 
-> 该页面直接引用根目录的 `README.md`，确保文档站与项目说明同步更新。
+Atlas Admin Starter 是一个基于 Vue 3 + TypeScript + Pinia + Vite 的大型管理平台脚手架，集成现代化开发工具链与企业级最佳实践。
 
-<script setup>
-import ProjectReadme from '../../README.md'
-</script>
+## 📖 命名由来
 
-<ProjectReadme />
+**Atlas Admin Starter** 的命名寓意：
+
+- **Atlas** - 源自希腊神话中的泰坦神阿特拉斯（Atlas），他肩负着支撑天空的重任，象征着项目的稳定性和可靠性，寓意着为开发者提供坚实的技术基础支撑
+- **Admin** - 明确表示这是一个管理后台系统模板，专注于企业级管理平台开发
+- **Starter** - 表示这是一个快速启动模板，为开发者提供开箱即用的项目基础架构
+
+整体寓意：**Atlas Admin Starter** 就像神话中的阿特拉斯一样，为现代管理平台开发提供坚实可靠的技术基础，让开发者能够快速构建高质量的企业级应用。
+
+> 🎯 **精简依赖**: 项目采用精简的依赖策略，只包含核心必需的依赖，支持按需扩展。所有依赖版本均为最新稳定版本。
+
+## ✨ 特性
+
+- 🚀 **Vue 3** - 使用最新的 Vue 3 Composition API
+- 📘 **TypeScript** - 完整的 TypeScript 支持
+- 🍍 **Pinia** - 现代化的状态管理
+- ⚡ **Vite** - 极速的开发体验
+- 🌐 **Vue Router** - 官方路由管理
+- 📡 **Axios** - HTTP 请求库
+- 📱 **响应式设计** - 支持多端适配
+- 🎯 **代码规范** - ESLint + Prettier
+- 🧪 **测试支持** - Vitest + Vue Test Utils
+- 🔧 **开发工具** - 自动导入、热更新等
+- 🚀 **CI/CD** - GitHub Actions 集成
+- 📦 **模块化架构** - 功能模块化组织
+- 🎨 **可扩展UI** - 支持按需添加UI组件库
 
 
 
