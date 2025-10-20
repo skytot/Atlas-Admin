@@ -14,13 +14,13 @@
 ### 第一阶段（高频刚需）
 
 - toData 扩展：
-  - toDataOr<T>(p: Promise<AxiosResponse<T>>, fallback: T): Promise<T>
-  - safeData<T>(p: Promise<AxiosResponse<T>>): Promise<{ ok: true; data: T } | { ok: false; error: AxiosError }>
+  - `toDataOr<T>(p: Promise<AxiosResponse<T>>, fallback: T): Promise<T>`
+  - `safeData<T>(p: Promise<AxiosResponse<T>>): Promise<{ ok: true; data: T } | { ok: false; error: AxiosError }>`
 - 超时与取消：
   - withTimeout<T>(p: Promise<T>, ms: number): Promise<T>
   - makeCancelable<T>(p: Promise<T>): { promise: Promise<T>; cancel: () => void }
 - 重试（显式调用，不改默认行为）：
-  - withRetry<T>(fn: () => Promise<T>, opts: { retries: number; backoff?: 'linear' | 'exp' | ((n: number) => number) }): Promise<T>
+  - `withRetry<T>(fn: () => Promise<T>, opts: { retries: number; backoff?: 'linear' | 'exp' | ((n: number) => number) }): Promise<T>`
 - 错误工具：
   - classifyAxiosError(err: unknown): { isNetwork: boolean; isTimeout: boolean; status?: number; code?: string }
 
@@ -39,7 +39,7 @@
   - withAuth(config, getToken): AxiosRequestConfig
   - json(), formUrlencoded(), multipart()：返回 { headers, data }
 - 分页与列表：
-  - fetchPaged<T>(url, { page, size, params? }): Promise<{ items: T[]; total?: number }>
+  - `fetchPaged<T>(url, { page, size, params? }): Promise<{ items: T[]; total?: number }>`
 - 缓存与条件请求：
   - withCache<T>(key: string, fetcher: () => Promise<T>, ttlMs?: number)
   - etag helpers：buildIfNoneMatch(headers), parseEtag(response)
@@ -53,11 +53,11 @@
 ### 第三阶段（可靠性与弹性）
 
 - 并发与限流：
-  - limit<T>(fn: (...args: any[]) => Promise<T>, { maxConcurrent, minInterval })
+  - `limit<T>(fn: (...args: any[]) => Promise<T>, { maxConcurrent, minInterval })`
 - 熔断：
-  - circuit<T>(fn: () => Promise<T>, opts: { failureThreshold: number; cooldownMs: number })
+  - `circuit<T>(fn: () => Promise<T>, opts: { failureThreshold: number; cooldownMs: number })`
 - 多源竞速与健康检查：
-  - raceHosts<T>(hosts: string[], build: (base: string) => Promise<T>)
+  - `raceHosts<T>(hosts: string[], build: (base: string) => Promise<T>)`
   - healthCheck(url: string): Promise<'up' | 'down'>
 
 验收标准：
