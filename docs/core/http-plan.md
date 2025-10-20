@@ -17,12 +17,12 @@
   - `toDataOr<T>(p: Promise<AxiosResponse<T>>, fallback: T): Promise<T>`
   - `safeData<T>(p: Promise<AxiosResponse<T>>): Promise<{ ok: true; data: T } | { ok: false; error: AxiosError }>`
 - 超时与取消：
-  - withTimeout<T>(p: Promise<T>, ms: number): Promise<T>
-  - makeCancelable<T>(p: Promise<T>): { promise: Promise<T>; cancel: () => void }
+  - `withTimeout<T>(p: Promise<T>, ms: number): Promise<T>`
+  - `makeCancelable<T>(p: Promise<T>): { promise: Promise<T>; cancel: () => void }`
 - 重试（显式调用，不改默认行为）：
   - `withRetry<T>(fn: () => Promise<T>, opts: { retries: number; backoff?: 'linear' | 'exp' | ((n: number) => number) }): Promise<T>`
 - 错误工具：
-  - classifyAxiosError(err: unknown): { isNetwork: boolean; isTimeout: boolean; status?: number; code?: string }
+  - `classifyAxiosError(err: unknown): { isNetwork: boolean; isTimeout: boolean; status?: number; code?: string }`
 
 验收标准：
 
@@ -33,16 +33,16 @@
 ### 第二阶段（可观察性与易用性）
 
 - 进度与节流：
-  - onUploadProgressThrottled(handler, intervalMs)
-  - onDownloadProgressThrottled(handler, intervalMs)
+  - `onUploadProgressThrottled(handler, intervalMs)`
+  - `onDownloadProgressThrottled(handler, intervalMs)`
 - 鉴权与序列化辅助：
-  - withAuth(config, getToken): AxiosRequestConfig
-  - json(), formUrlencoded(), multipart()：返回 { headers, data }
+  - `withAuth(config, getToken): AxiosRequestConfig`
+  - `json(), formUrlencoded(), multipart()：返回 { headers, data }`
 - 分页与列表：
   - `fetchPaged<T>(url, { page, size, params? }): Promise<{ items: T[]; total?: number }>`
 - 缓存与条件请求：
-  - withCache<T>(key: string, fetcher: () => Promise<T>, ttlMs?: number)
-  - etag helpers：buildIfNoneMatch(headers), parseEtag(response)
+  - `withCache<T>(key: string, fetcher: () => Promise<T>, ttlMs?: number)`
+  - `etag helpers：buildIfNoneMatch(headers), parseEtag(response)`
 
 验收标准：
 
@@ -58,7 +58,7 @@
   - `circuit<T>(fn: () => Promise<T>, opts: { failureThreshold: number; cooldownMs: number })`
 - 多源竞速与健康检查：
   - `raceHosts<T>(hosts: string[], build: (base: string) => Promise<T>)`
-  - healthCheck(url: string): Promise<'up' | 'down'>
+  - `healthCheck(url: string): Promise<'up' | 'down'>`
 
 验收标准：
 

@@ -305,5 +305,5 @@ it('调试测试用例', () => {
 
 - [认证模块文档](./auth.md) - 认证模块使用指南
 - [状态管理文档](./store.md) - 状态管理使用指南
-- [测试指南](./testing-guide.md) - 通用测试编写指南
-- [测试总结](./testing-summary.md) - 测试实施总结
+- [测试指南](../testing/guide.md) - 通用测试编写指南
+- [测试总结](../testing/summary.md) - 测试实施总结
