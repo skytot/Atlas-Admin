@@ -1,5 +1,4 @@
 import { consoleTransport } from './transports/console.transport'
-import { errorTransport } from './transports/error-transport'
 import type { LogLevel, Logger, LoggerOptions, LogTransport, LogPayload, LogContext } from './types'
 
 /**
@@ -20,7 +19,7 @@ const DEFAULT_OPTIONS: Required<Omit<LoggerOptions, 'transports'>> & { transport
   level: 'info',
   context: {} as LogContext,
   tags: [],
-  transports: [consoleTransport, errorTransport],
+  transports: [consoleTransport],
   enabled: true
 }
 

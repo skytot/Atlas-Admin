@@ -1,184 +1,124 @@
 # HTTP 客户端
 
-HTTP 客户端模块基于 Axios 进行了分层封装，最终对外仅暴露一个通用请求函数 `request`。通过在配置中传递不同参数即可覆盖常见业务场景，包括标准 CRUD、下载、表单提交、无 Token 请求等。
+本模块遵循“最少封装、严格对齐 axios”的原则：
+
+- 对外导出一个配置后的 `AxiosInstance`：`http`
+- 不改动 axios 的返回值与错误形态
+- 提供可选工具函数 `toData`，供调用处显式提取 `response.data`
 
 ## 模块结构
 
 ```
 src/core/http/
-├── config.ts              # 统一的默认配置（axios 与 HttpClient）
-├── axios-instance.ts      # Axios 实例工厂，复用默认 axios 配置
-├── http-client.ts         # HttpClient 实现与高级能力（认证、重试、钩子）
-├── request.ts             # 对外唯一导出的 request 函数
-├── retry.ts               # 重试策略实现
-├── error.ts               # HttpError 定义
-├── utils.ts               # Header 注入、错误归一化
-├── types.ts               # 类型定义
-└── index.ts               # 模块出口（仅导出 request）
+├── config.ts          # 默认 axios 配置（baseURL/timeout 等）
+├── client.ts          # createHttpClient + http 单例（AxiosInstance）
+├── toData.ts          # 可选工具，将 Promise<AxiosResponse<T>> 映射为 Promise<T>
+└── index.ts           # 模块出口
 ```
 
-## request 函数说明
+## 导出
 
 ```ts
-import { request } from '@/core/http'
+import { http, createHttpClient, toData } from '@/core/http'
+import type { AxiosInstance, AxiosRequestConfig, AxiosError, AxiosResponse } from '@/core/http'
 ```
 
-- **签名**：`request<T>(config: HttpRequestConfig<T>, raw?: true)`
-- **默认返回**：`response.data`
-- **原始响应**：传 `raw: true`（或在配置里写 `rawResponse: true`）即可得到 `AxiosResponse<T>`
-- **配置选项**：继承自 `AxiosRequestConfig`，并扩展了 `withAuth`、`autoRefreshToken`、`retry`、`metadata` 等高级能力
+- `http`: 默认实例，`AxiosInstance`
+- `createHttpClient(config?)`: 创建新的 `AxiosInstance`
+- `toData(promise)`: 将 `Promise<AxiosResponse<T>>` 转为 `Promise<T>`（可选）
+- 类型全部直接重导出自 axios 官方定义
 
-## 常见用法
+## 使用示例
 
-### 1. 标准 GET 请求
+### 1. 标准 GET 请求（保持 axios 语义）
 
 ```ts
-const users = await request<UserDTO[]>({
-  url: '/users',
-  method: 'GET'
+const res = await http.get<User[]>('/users') // AxiosResponse<User[]>
+console.log(res.data)
+```
+
+若更偏好直接拿 data：
+
+```ts
+import { toData } from '@/core/http'
+const users = await toData(http.get<User[]>('/users')) // Promise<User[]>
+```
+
+### 2. 表单与上传
+
+```ts
+await http.post('/form/submit', new URLSearchParams({ name: 'Alice' }), {
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 })
-```
 
-### 2. 下载文件（获取 Blob）
-
-```ts
-const blob = await request<Blob>({
-  url: '/reports/export',
-  method: 'GET',
-  responseType: 'blob',
-  rawResponse: false // 默认为 false，可省略
-})
-```
-
-需要读取响应头（例如文件名）时：
-
-```ts
-const response = await request<ArrayBuffer>(
-  {
-    url: '/reports/export',
-    method: 'GET',
-    responseType: 'arraybuffer'
-  },
-  true
-) // 返回 AxiosResponse
-const disposition = response.headers['content-disposition']
-```
-
-### 3. 表单提交
-
-#### application/x-www-form-urlencoded
-
-```ts
-import qs from 'qs'
-
-await request({
-  url: '/form/submit',
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  data: qs.stringify({ name: 'Alice', age: 18 })
-})
-```
-
-#### multipart/form-data（包含文件）
-
-```ts
 const formData = new FormData()
 formData.append('file', file)
-formData.append('desc', '示例')
-
-await request({
-  url: '/upload',
-  method: 'POST',
-  data: formData,
-  headers: { 'Content-Type': 'multipart/form-data' }
-})
+await http.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
 ```
 
-### 4. 无需 Token 的请求
+### 3. 下载文件与读取响应头
 
 ```ts
-await request({
-  url: '/public/info',
-  method: 'GET',
-  withAuth: false // 关闭默认的 Authorization 注入
-})
+const res = await http.get<ArrayBuffer>('/reports/export', { responseType: 'arraybuffer' })
+const disposition = res.headers['content-disposition']
 ```
 
-### 5. 自定义重试策略
+### 4. 创建独立实例
 
 ```ts
-await request({
-  url: '/analytics',
-  method: 'GET',
-  retry: {
-    retries: 3,
-    delay: attempt => attempt * 500,
-    retryOnStatus: [500, 503]
-  }
-})
+import { createHttpClient } from '@/core/http'
+const serviceA = createHttpClient({ baseURL: 'https://api-a.example.com' })
+const serviceB = createHttpClient({ baseURL: 'https://api-b.example.com', withCredentials: true })
 ```
 
-### 6. 原样透传请求配置
+## 设计约束
 
-任意 Axios 原生配置都可透传，如 `timeout`、`paramsSerializer`、`transformRequest` 等（默认超时时间等可在 `src/core/http/config.ts` 中统一调整）：
+- 不新增自定义配置项；仅使用 axios 官方 `AxiosRequestConfig`
+- 不改写返回值/错误形态；错误保持 `AxiosError`
+- 默认能力（超时、baseURL 等）在 `config.ts` 配置；业务能力在调用处显式实现
+
+## API 层示例
 
 ```ts
-await request({
-  url: '/search',
-  method: 'GET',
-  params: { q: keyword },
-  timeout: 20000,
-  paramsSerializer: params => new URLSearchParams(params as Record<string, string>).toString()
-})
+// src/features/user/api/userApi.ts
+import { http, toData } from '@/core/http'
+
+export interface UserDTO {
+  id: number
+  name: string
+  roles?: string[]
+  permissions?: string[]
+}
+
+export const userApi = {
+  getUser: (id: string | number) => toData(http.get<UserDTO>(`/users/${id}`)),
+  listUsers: () => toData(http.get<UserDTO[]>('/users')),
+  updateUser: (data: UserDTO) => toData(http.put<UserDTO>(`/users/${data.id}`, data)),
+}
 ```
 
-## 高级能力（自动启用）
-
-- **认证控制**：默认追加 Bearer Token；是否自动刷新由 `src/core/http/config.ts` 配置，当前默认关闭，如需启用可传 `autoRefreshToken: true` 或自定义 `HttpClient`
-- **重试机制**：可选的状态码/网络重试策略，支持指数退避
-- **钩子体系**：请求、响应、错误钩子在 `HttpClient` 中实现，若需要自定义流程可自行实例化 `HttpClient`
-- **错误标准化**：所有异常最终都会转换为 `HttpError`，方便统一捕获与上报
-
-若需要完全自定义行为，可直接实例化 `HttpClient`（同样建议引用 `defaultHttpClientOptions` 进行扩展）：
+## 鉴权注入（显式工具）
 
 ```ts
-import { HttpClient } from '@/core/http/http-client'
+import { http, withAuth, toData } from '@/core/http'
 
-const customClient = new HttpClient({
-  withAuth: false,
-  autoRefreshToken: false,
-  retry: { retries: 1 }
-})
+// 从你的认证模块获取 token（示例）
+const getToken = () => localStorage.getItem('token')
 
-const data = await customClient.request({ url: '/custom' })
-```
-1.使用内置 HttpClient 类创建实例
+// 在单次请求前显式注入 Authorization 头
+const profile = await toData(
+  http.get<UserDTO>('/me', withAuth({}, { getToken }))
+)
 
-```ts
-import { HttpClient } from '@/core/http/http-client'
-import { defaultAxiosConfig, defaultHttpClientOptions } from '@/core/http/config'
-
-const serviceA = new HttpClient({
-  ...defaultHttpClientOptions,
-  axiosConfig: { ...defaultAxiosConfig, baseURL: 'https://api-a.example.com' }
-})
-
-const serviceB = new HttpClient({
-  ...defaultHttpClientOptions,
-  withAuth: false, // 或者传其他自定义行为
-  axiosConfig: { ...defaultAxiosConfig, baseURL: 'https://api-b.example.com' }
-})
+// 自定义请求头键名与前缀（如仅注入 token）
+const res = await http.get('/audit', withAuth({}, { getToken, headerKey: 'X-Auth-Token', scheme: '' }))
 ```
 
-2. **不同实例独立使用**  
-   ```ts
-   const dataA = await serviceA.request({ url: '/resource' })
-   const dataB = await serviceB.request({ url: '/public', withAuth: false })
-   ```
+## JSDoc 与类型提示约定
 
-要点说明：
-- `HttpClient` 构造器允许传入 `instance`（现成的 Axios 实例）或 `axiosConfig`（额外的 Axios 配置）。
-- 每个实例维护自己的钩子集合、刷新状态、重试策略等，互不影响。
-- 建议基于 `src/core/http/config.ts` 提供的默认配置做扩展，避免散落默认值。
-  
-> 默认导出中不再暴露 `http` / `httpClient`，以 `request` 作为唯一通用入口，既满足通用场景，也为高级用法保留灵活空间。
+- 所有可选工具均提供完整 JSDoc，IDE 将展示参数、返回值与默认值说明。
+- 严格遵循 axios 类型：
+  - 返回 `AxiosResponse<T>`；
+  - 错误为 `AxiosError`；
+  - 仅使用 `AxiosRequestConfig` 作为配置类型。
+- 建议在 API 层结合 `toData` 返回纯数据，以提升上层可读性。

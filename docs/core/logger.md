@@ -44,6 +44,30 @@ const customLogger = createLogger({
 customLogger.debug('自定义日志')
 ```
 
+## 最小实例与工具
+
+```ts
+import { logger, createLogger, withContext, toErrorContext } from '@/core/logger'
+
+// 默认实例（仅 console 输出）
+logger.info('应用启动', { module: 'app' })
+
+// 自定义实例
+const appLogger = createLogger({ level: 'debug', context: { module: 'user' } })
+appLogger.debug('加载用户列表')
+
+// 纯函数工具：合并上下文
+const ctx = withContext({ module: 'api' }, { action: 'fetch' })
+logger.info('请求开始', ctx)
+
+// 从错误提取上下文
+try {
+  throw new Error('网络异常')
+} catch (e) {
+  logger.error('请求失败', toErrorContext(e))
+}
+```
+
 ## 配置说明
 
 ### LoggerOptions

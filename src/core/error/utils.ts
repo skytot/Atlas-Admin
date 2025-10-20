@@ -1,4 +1,5 @@
 import type { NormalizedError } from './types'
+import type { AxiosError } from 'axios'
 
 /**
  * 将未知错误标准化为 NormalizedError 结构。
@@ -34,6 +35,41 @@ export function normalizeError(error: unknown): NormalizedError {
     message: String(error),
     name: 'Error'
   }
+}
+
+/**
+ * 将未知错误分类为基础维度（网络/超时/HTTP 状态）。
+ * 不改变原始错误形态，便于日志与上报。
+ */
+export function classifyError(error: unknown): {
+  isAxios: boolean
+  isNetwork: boolean
+  isTimeout: boolean
+  status?: number
+  code?: string
+} {
+  const ax = error as AxiosError | undefined
+  const isAxios = Boolean(ax && (ax as any).isAxiosError)
+  const status = (ax?.response?.status as number | undefined) ?? undefined
+  const code = (ax?.code as string | undefined) ?? undefined
+  const isNetwork = isAxios && !status
+  const isTimeout = code === 'ECONNABORTED'
+  return { isAxios, isNetwork, isTimeout, status, code }
+}
+
+/**
+ * 将错误转换为用户可读的信息（UI 友好提示）。
+ * 不抛出异常，仅返回字符串。
+ */
+export function toUserMessage(error: unknown): string {
+  const n = normalizeError(error)
+  const { isAxios, isNetwork, isTimeout, status } = classifyError(error)
+  if (isAxios) {
+    if (isTimeout) return '请求超时，请稍后重试'
+    if (isNetwork) return '网络异常，请检查连接'
+    if (status && status >= 500) return '服务暂时不可用，请稍后再试'
+  }
+  return n.message || '发生未知错误'
 }
 
 /**

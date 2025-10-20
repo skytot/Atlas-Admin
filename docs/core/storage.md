@@ -140,6 +140,26 @@ function logout() {
 }
 ```
 
+### 最小实例与工具
+
+```typescript
+import { storage } from '@/core/storage'
+import { toJSON, fromJSON, withPrefix, withTTL } from '@/core/storage/tools'
+
+// 直接使用最小 API
+storage.set('user', { id: 1, name: 'A' })
+const user = storage.get<{ id: number; name: string }>('user')
+
+// JSON 工具（可选）
+const s = toJSON(user)
+const parsed = s ? fromJSON<typeof user>(s) : undefined
+
+// 前缀与 TTL 工具（纯函数，不改变默认行为）
+const key = withPrefix('APP_', 'token')
+const wrapped = withTTL('abc', 60_000)
+storage.set(key, wrapped)
+```
+
 ### 应用配置管理
 
 ```typescript

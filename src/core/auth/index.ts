@@ -89,8 +89,14 @@ export const auth = {
   },
 
   /**
-   * 获取当前保存的认证令牌。
-   * @returns {string | null} 返回令牌字符串，若不存在则为 null
+   * 获取当前保存的认证令牌（契约约束：不抛错，返回“最新值”或空）。
+   *
+   * 设计说明：
+   * - 不得抛出异常；读取失败或无令牌时返回 null。
+   * - 应返回“当前最新”的可用值（避免返回过期/旧值）。
+   * - 与 `withAuth` 协同：当返回 null 时，`withAuth` 不注入 Authorization 头。
+   *
+   * @returns {string | null} 令牌字符串；不存在或不可用时为 null
    */
   getToken(): string | null {
     return state.token || null
@@ -277,13 +283,24 @@ export const auth = {
 
   /**
    * 清除所有认证相关数据并触发登出事件。
+   *
+   * 不变量（登出后必须满足）：
+   * - state.token === ''
+   * - state.user === null
+   * - state.refreshToken === undefined
+   * - state.lastLoginTime === undefined
+   * - 持久化存储被清空
    */
   logout(): void {
     state = {
       token: '',
-      user: null
-    }
+      user: null,
+      refreshToken: undefined,
+      lastLoginTime: undefined
+    } as AuthState
+    // 先清空持久化，再写入当前空状态，确保外部读取一致
     localAuthPersistence.clear()
+    localAuthPersistence.save(state)
     this.dispatchAuthEvent('logout')
   },
 
@@ -302,14 +319,14 @@ export const auth = {
       // 这里应该调用实际的刷新令牌API
       const response = await this.callRefreshTokenAPI(refreshToken)
       
+      // 写入最新令牌并持久化
       this.setToken(response.token)
-      if (response.refreshToken) {
-        this.setRefreshToken(response.refreshToken)
-      }
+      if (response.refreshToken) this.setRefreshToken(response.refreshToken)
       
       this.dispatchAuthEvent('token-refreshed', { token: response.token })
       return response.token
     } catch (error) {
+      // 失败时清理状态，避免脏 token 持续存在
       this.logout()
       this.dispatchAuthEvent('token-refresh-error', { error })
       throw error

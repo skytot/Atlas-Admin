@@ -63,42 +63,18 @@ export const staticRoutes = [
 ]
 ```
 
-### 路由守卫
+### 路由守卫（显式注册）
 
 ```typescript
-// 全局前置守卫
-router.beforeEach((to, from, next) => {
-  const token = getToken()
-  const requiresAuth = to.meta.requiresAuth
-  
-  // 检查是否需要认证
-  if (requiresAuth && !token) {
-    next('/login')
-    return
-  }
-  
-  // 已登录用户访问登录页，重定向到首页
-  if (to.path === '/login' && token) {
-    next('/')
-    return
-  }
-  
-  next()
-})
+import { router, useAuthGuard } from '@/core/router'
+import { auth } from '@/core/auth'
 
-// 全局后置钩子
-router.afterEach((to, from) => {
-  // 设置页面标题
-  if (to.meta.title) {
-    document.title = `${to.meta.title} - Atlas Admin`
-  }
-  
-  // 记录页面访问
-  logger.info('页面访问', {
-    from: from.path,
-    to: to.path,
-    timestamp: new Date().toISOString()
-  })
+// 应用入口显式注册，避免隐式副作用
+useAuthGuard(router, () => auth.getToken())
+
+// 可选：全局后置钩子
+router.afterEach((to) => {
+  if (to.meta.title) document.title = `${to.meta.title} - Atlas Admin`
 })
 ```
 

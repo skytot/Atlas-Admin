@@ -57,12 +57,12 @@ export default defineConfig({
         activeMatch: '^/core/',
         items: [
           { text: '📚 模块导读', link: '/core/intro' },
+          { text: '🧭 设计理念', link: '/core/design-philosophy' },
           { text: '🔐 认证模块', link: '/core/auth' },
           { text: '⚙️ 配置管理', link: '/core/config' },
           { text: '⚠️ 错误处理', link: '/core/error' },
           { text: '🌐 HTTP 客户端', link: '/core/http' },
           { text: '📝 日志系统', link: '/core/logger' },
-          { text: '🔌 插件体系', link: '/core/plugins' },
           { text: '📦 存储管理', link: '/core/storage' },
           { text: '🛣️ 路由管理', link: '/core/router' },
           { text: '🗃️ 状态管理', link: '/core/store' }
@@ -70,14 +70,14 @@ export default defineConfig({
       },
       {
         text: '🧪 测试指南',
-        activeMatch: '^/core/testing',
+        activeMatch: '^/testing',
         items: [
-          { text: '📚 测试索引', link: '/core/testing-index' },
-          { text: '📋 测试计划', link: '/core/testing-plan' },
-          { text: '📖 测试指南', link: '/core/testing-guide' },
-          { text: '📊 测试报告', link: '/core/testing-reports' },
-          { text: '🔧 问题排查', link: '/core/testing-troubleshooting' },
-          { text: '📈 测试总结', link: '/core/testing-summary' }
+          { text: '📚 测试索引', link: '/testing/index' },
+          { text: '📋 测试计划', link: '/testing/plan' },
+          { text: '📖 测试指南', link: '/testing/guide' },
+          { text: '📊 测试报告', link: '/testing/reports' },
+          { text: '🔧 问题排查', link: '/testing/troubleshooting' },
+          { text: '📈 测试总结', link: '/testing/summary' }
         ]
       },
       {
@@ -116,34 +116,36 @@ export default defineConfig({
           ]
         }
       ],
-      '/core/': [
-        {
-          text: 'Core 模块',
-          items: [
-            { text: '简介', link: '/core/intro' },
-            { text: '认证模块', link: '/core/auth' },
-            { text: '配置管理', link: '/core/config' },
-            { text: '错误处理', link: '/core/error' },
-            { text: 'HTTP 客户端', link: '/core/http' },
-            { text: '日志系统', link: '/core/logger' },
-            { text: '插件体系', link: '/core/plugins' },
-            { text: '存储管理', link: '/core/storage' },
-            { text: '路由管理', link: '/core/router' },
-            { text: '状态管理', link: '/core/store' }
-          ]
-        },
-        {
-          text: '🧪 测试指南',
-          items: [
-            { text: '📚 测试索引', link: '/core/testing-index' },
-            { text: '📋 测试计划', link: '/core/testing-plan' },
-            { text: '📖 测试指南', link: '/core/testing-guide' },
-            { text: '📊 测试报告', link: '/core/testing-reports' },
-            { text: '🔧 问题排查', link: '/core/testing-troubleshooting' },
-            { text: '📈 测试总结', link: '/core/testing-summary' }
-          ]
-        }
-      ],
+              '/core/': [
+                {
+                  text: 'Core 模块',
+                  items: [
+                    { text: '简介', link: '/core/intro' },
+                    { text: '设计理念', link: '/core/design-philosophy' },
+                    { text: '认证模块', link: '/core/auth' },
+                    { text: '配置管理', link: '/core/config' },
+                    { text: '错误处理', link: '/core/error' },
+                    { text: 'HTTP 客户端', link: '/core/http' },
+                    { text: '日志系统', link: '/core/logger' },
+                    { text: '存储管理', link: '/core/storage' },
+                    { text: '路由管理', link: '/core/router' },
+                    { text: '状态管理', link: '/core/store' }
+                  ]
+                }
+              ],
+              '/testing/': [
+                {
+                  text: '🧪 测试指南',
+                  items: [
+                    { text: '📚 测试索引', link: '/testing/index' },
+                    { text: '📋 测试计划', link: '/testing/plan' },
+                    { text: '📖 测试指南', link: '/testing/guide' },
+                    { text: '📊 测试报告', link: '/testing/reports' },
+                    { text: '🔧 问题排查', link: '/testing/troubleshooting' },
+                    { text: '📈 测试总结', link: '/testing/summary' }
+                  ]
+                }
+              ],
       '/features/': [
         {
           text: '业务特性',
@@ -157,19 +159,19 @@ export default defineConfig({
           ]
         }
       ],
-      '/testing': [
-        {
-          text: '测试文档',
-          items: [
-            { text: '📚 测试索引', link: '/core/testing-index' },
-            { text: '📋 测试计划', link: '/core/testing-plan' },
-            { text: '📖 测试指南', link: '/core/testing-guide' },
-            { text: '📊 测试报告', link: '/core/testing-reports' },
-            { text: '🔧 问题排查', link: '/core/testing-troubleshooting' },
-            { text: '📈 测试总结', link: '/core/testing-summary' }
-          ]
-        }
-      ]
+              '/testing': [
+                {
+                  text: '测试文档',
+                  items: [
+                    { text: '📚 测试索引', link: '/testing/index' },
+                    { text: '📋 测试计划', link: '/testing/plan' },
+                    { text: '📖 测试指南', link: '/testing/guide' },
+                    { text: '📊 测试报告', link: '/testing/reports' },
+                    { text: '🔧 问题排查', link: '/testing/troubleshooting' },
+                    { text: '📈 测试总结', link: '/testing/summary' }
+                  ]
+                }
+              ]
     },
     footer: {
       message: 'Atlas Admin · 基于 Vue 3 + Vite 的大型管理平台脚手架',

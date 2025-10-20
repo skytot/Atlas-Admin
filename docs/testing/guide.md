@@ -265,6 +265,6 @@ expect(mockFunction).toHaveBeenCalledTimes(1)
 
 ## 相关文档
 
-- [测试计划](./testing-plan.md) - 原始测试规划
-- [测试总结](./testing-summary.md) - 当前实施状态
+- [测试计划](./plan.md) - 原始测试规划
+- [测试总结](./summary.md) - 当前实施状态
 - [测试规范](../../tests/README.md) - 测试目录说明
