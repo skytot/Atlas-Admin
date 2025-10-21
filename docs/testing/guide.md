@@ -175,9 +175,35 @@ it('应当正确处理异步操作', async () => {
 
 ## 运行测试
 
-### 运行所有测试
+### 基础测试命令
 ```bash
+# 运行所有测试
+pnpm test:run
+# 或
 npx vitest run
+
+# 监听模式
+pnpm test:watch
+# 或
+npx vitest
+```
+
+### 测试报告命令
+```bash
+# 快速测试（核心模块）
+pnpm test:quick
+
+# 完整测试（所有模块）
+pnpm test:full
+
+# 特定模块测试
+pnpm test:http      # HTTP模块测试
+pnpm test:storage   # 存储模块测试
+
+# 生成测试报告
+pnpm test:analyze   # 基础分析报告
+pnpm test:enhanced  # 增强版详细报告（包含具体测试用例）
+pnpm test:json      # JSON格式报告
 ```
 
 ### 运行特定模块
@@ -195,11 +221,6 @@ npx vitest run tests/core/auth/ tests/core/store/user.store.spec.ts
 ### 运行特定文件
 ```bash
 npx vitest run tests/core/auth/auth.spec.ts
-```
-
-### 监听模式
-```bash
-npx vitest
 ```
 
 ### 覆盖率报告

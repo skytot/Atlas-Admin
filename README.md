@@ -150,8 +150,9 @@ pnpm test:http             # HTTP模块测试
 pnpm test:storage          # 存储模块测试
 
 # 测试报告
+pnpm test:analyze          # 基础分析报告
+pnpm test:enhanced         # 增强版详细报告（包含具体测试用例）
 pnpm test:json             # 生成JSON格式报告
-pnpm test:html             # 生成HTML格式报告
 pnpm test:report           # 交互式测试报告工具
 ```
 
@@ -258,8 +259,9 @@ pnpm test:http             # HTTP模块测试
 pnpm test:storage          # 存储模块测试
 
 # 测试报告
+pnpm test:analyze          # 基础分析报告
+pnpm test:enhanced         # 增强版详细报告（包含具体测试用例）
 pnpm test:json             # 生成JSON格式报告
-pnpm test:html             # 生成HTML格式报告
 pnpm test:report           # 交互式测试报告工具
 ```
 

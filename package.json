@@ -28,6 +28,8 @@
     "test:storage": "node scripts/test-report.js storage verbose",
     "test:json": "node scripts/test-report.js full json",
     "test:report": "node scripts/test-report.js",
+    "test:analyze": "node scripts/test-report-analyzer.js",
+    "test:enhanced": "node scripts/test-report-enhanced.js",
     "test:run": "vitest run",
     "format:check": "prettier --check .",
     "type-check": "vue-tsc --noEmit",
