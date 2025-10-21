@@ -61,10 +61,9 @@ describe('core/auth/init', () => {
     })
 
     // 从认证模块恢复状态
-    userStore.restoreFromAuth()
+    userStore.syncFromAuth()
 
-    expect(userStore.token).toBe('test-token')
-    expect(userStore.name).toBe('Alice')
+    expect(userStore.user?.name).toBe('Alice')
     expect(userStore.permissions).toEqual(['dashboard.read'])
     expect(userStore.roles).toEqual(['user'])
     expect(userStore.isAuthenticated).toBe(true)
@@ -89,11 +88,10 @@ describe('core/auth/init', () => {
     })
 
     // 恢复UserStore状态
-    userStore.restoreFromAuth()
+    userStore.syncFromAuth()
 
     // 验证状态一致性
-    expect(userStore.token).toBe(auth.getToken())
-    expect(userStore.name).toBe(auth.getUser()?.name)
+    expect(userStore.user?.name).toBe(auth.getUser()?.name)
     expect(userStore.permissions).toEqual(auth.getUser()?.permissions)
     expect(userStore.roles).toEqual(auth.getUser()?.roles)
   })
@@ -116,7 +114,7 @@ describe('core/auth/init', () => {
       roles: ['user']
     })
 
-    userStore.restoreFromAuth()
+    userStore.syncFromAuth()
 
     // 清除认证状态
     auth.logout()
@@ -127,10 +125,9 @@ describe('core/auth/init', () => {
     expect(auth.isAuthenticated()).toBe(false)
 
     // UserStore状态也应该被清除
-    // 注意：UserStore不会自动清除，需要手动清除
-    userStore.logoutAndClear()
-    expect(userStore.token).toBe('')
-    expect(userStore.name).toBe('')
+    // 注意：UserStore不会自动清除，需要手动同步
+    userStore.syncFromAuth()
+    expect(userStore.user).toBeNull()
     expect(userStore.permissions).toEqual([])
     expect(userStore.isAuthenticated).toBe(false)
   })

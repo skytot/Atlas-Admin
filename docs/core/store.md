@@ -6,37 +6,80 @@
 
 状态管理模块位于 `src/core/store/` 目录下，主要提供：
 - 用户状态管理（`useUserStore`）- 纯消费端
+- 认证组合式函数（`useAuth`）- 自动管理生命周期
 - 全局应用状态装配（`setupStore` 与 Pinia 实例管理）
 - 从Auth模块获取状态数据
 - 响应式状态展示
 - 不独立存储数据
 
+## 架构设计
+
+```
+Auth 模块 (数据源)
+    ↓
+User Store (响应式状态)
+    ↓
+Vue 组件 (UI 展示)
+```
+
+### 职责分工
+
+- **Auth 模块** - 数据修改和持久化
+- **User Store** - 响应式状态管理
+- **Vue 组件** - UI 展示和用户交互
+
 ## 核心功能
 
 ### 用户状态管理
 
-#### `useUserStore`
-用户相关的状态管理，作为纯消费端从Auth模块获取数据。
+#### 方式一：使用组合式函数（推荐）
 
 ```vue
 <template>
   <div>
-    <div v-if="userStore.isAuthenticated">
-      欢迎，{{ userStore.userInfo.name }}
+    <div v-if="isAuthenticated">
+      欢迎，{{ displayName }}
     </div>
   </div>
 </template>
 
 <script setup>
-import { useUserStore } from '@/core/store/modules/user'
+import { useAuth } from '@/core/store'
+
+const { state, displayName, login, logout } = useAuth()
+// 自动管理生命周期，无需手动调用
+
+const isAuthenticated = computed(() => state.value.isAuthenticated)
+</script>
+```
+
+#### 方式二：使用 Store 直接调用
+
+```vue
+<template>
+  <div>
+    <div v-if="userStore.isAuthenticated">
+      欢迎，{{ userStore.displayName }}
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { useUserStore } from '@/core/store'
 
 const userStore = useUserStore()
+const unsubscribe = userStore.startAuthSync()
+
+onUnmounted(() => {
+  unsubscribe()
+})
 </script>
 ```
 
 **状态结构：**
-- `name`: 用户名称
-- `token`: 认证令牌
+- `user`: 用户信息对象
+- `isAuthenticated`: 认证状态
+- `displayName`: 显示名称
 - `permissions`: 用户权限列表
 - `roles`: 用户角色列表
 - `lastLoginTime`: 最后登录时间
@@ -45,11 +88,13 @@ const userStore = useUserStore()
 
 ### 基础状态操作
 
+#### 使用组合式函数（推荐）
+
 ```vue
 <template>
   <div>
-    <div v-if="userStore.isAuthenticated">
-      用户：{{ userStore.userInfo.name }}
+    <div v-if="isAuthenticated">
+      用户：{{ displayName }}
     </div>
     <div v-else>
       未登录
@@ -58,9 +103,38 @@ const userStore = useUserStore()
 </template>
 
 <script setup>
-import { useUserStore } from '@/core/store/modules/user'
+import { useAuth } from '@/core/store'
+
+const { state, displayName, login, logout } = useAuth()
+// 自动管理生命周期，无需手动调用
+
+const isAuthenticated = computed(() => state.value.isAuthenticated)
+</script>
+```
+
+#### 使用 Store 直接调用
+
+```vue
+<template>
+  <div>
+    <div v-if="userStore.isAuthenticated">
+      用户：{{ userStore.displayName }}
+    </div>
+    <div v-else>
+      未登录
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { useUserStore } from '@/core/store'
 
 const userStore = useUserStore()
+const unsubscribe = userStore.startAuthSync()
+
+onUnmounted(() => {
+  unsubscribe()
+})
 
 // 状态会自动从认证模块同步，无需手动设置
 </script>
@@ -72,8 +146,14 @@ UserStore作为纯消费端，从Auth模块获取状态：
 
 #### 数据流向
 ```
-Auth模块 (唯一数据源) → AuthBridge (桥梁) → UserStore (消费端)
+Auth模块 (唯一数据源) → 事件通知 → UserStore (消费端) → Vue组件
 ```
+
+#### 自动同步机制
+
+- **组合式函数** - 自动管理生命周期，无需手动调用
+- **Store 直接使用** - 需要手动调用 `startAuthSync()` 和清理函数
+- **测试环境** - 需要手动调用 `syncFromAuth()` 确保状态同步
 
 #### 状态获取机制
 

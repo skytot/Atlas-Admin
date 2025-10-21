@@ -1,6 +1,5 @@
 import type { App } from 'vue'
 import { createPinia, type Pinia } from 'pinia'
-import { createUserStore, createAuthBridge, createUserPersistenceAdapter } from './modules/user'
 
 let piniaInstance: Pinia | null = null
 
@@ -28,13 +27,6 @@ export function getPiniaInstance(): Pinia {
   return ensurePiniaInstance()
 }
 
-export * from './modules/user'
-
-/**
- * 默认的用户 store，附带认证桥接与本地持久化。
- */
-export const useUserStore = createUserStore({
-  authBridge: createAuthBridge(),
-  persistence: createUserPersistenceAdapter()
-})
+// 导出用户 Store 模块
+export * from './modules'
 
