@@ -76,15 +76,21 @@ export function useAuth() {
     state.value.isAuthenticated = auth.isAuthenticated()
   }
 
-  // 事件监听器
-  let unsubscribe: (() => void) | null = null
+  // 事件监听器管理
+  const unsubscribe = ref<(() => void) | null>(null)
 
   const startAuthSync = () => {
+    // 清理之前的监听器
+    if (unsubscribe.value) {
+      unsubscribe.value()
+      unsubscribe.value = null
+    }
+    
     // 初始同步
     syncFromAuth()
     
     // 监听认证事件
-    unsubscribe = auth.onAuthEvent((event, data) => {
+    unsubscribe.value = auth.onAuthEvent((event, data) => {
       switch (event) {
         case 'login-success':
         case 'user-changed':
@@ -108,23 +114,31 @@ export function useAuth() {
     
     // 返回取消订阅函数
     return () => {
-      if (unsubscribe) {
-        unsubscribe()
-        unsubscribe = null
+      if (unsubscribe.value) {
+        unsubscribe.value()
+        unsubscribe.value = null
       }
     }
   }
 
   const stopAuthSync = () => {
-    if (unsubscribe) {
-      unsubscribe()
-      unsubscribe = null
+    if (unsubscribe.value) {
+      try {
+        unsubscribe.value()
+        unsubscribe.value = null
+      } catch (error) {
+        throw new Error(`停止认证同步失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      }
     }
   }
 
-  // 生命周期管理
+  // 生命周期管理 - 添加备用清理机制
   onMounted(() => {
     startAuthSync()
+  })
+
+  onBeforeUnmount(() => {
+    stopAuthSync()
   })
 
   onUnmounted(() => {

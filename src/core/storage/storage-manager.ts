@@ -17,6 +17,7 @@ import type {
 export class StorageManager {
   private prefix: string
   private storage: Storage
+  private listeners = new Set<StorageChangeCallback>()
 
   constructor(prefix: string = 'VE_', type: StorageType = 'localStorage') {
     if (!isNonEmptyString(prefix)) {
@@ -99,13 +100,6 @@ export class StorageManager {
       // 原始数据格式，处理类型信息
       const value = rawValue.substring(7) // 移除 '__RAW__' 前缀
       
-      // 只有在用户明确指定类型转换时才进行转换
-      // 对于 JSON-like 字符串，保持原始字符串格式
-      if (options.serialize === false) {
-        // 用户明确指定不序列化，保持原始字符串
-        return value as T
-      }
-      
       // 检查是否有类型信息
       const typeMatch = value.match(/^(.+)__TYPE__(.+)$/)
       if (typeMatch) {
@@ -167,12 +161,6 @@ export class StorageManager {
 
     try {
       const fullKey = this.getFullKey(key)
-      const storageItem: StorageItem = {
-        key: fullKey,
-        value,
-        timestamp: Date.now(),
-        type: options.type || 'localStorage'
-      }
 
       // 智能序列化：根据选项和数据类型决定存储格式
       const serializedValue = this.serializeValue(value, options)
@@ -310,6 +298,9 @@ export class StorageManager {
    * @returns {() => void} 取消监听函数
    */
   onStorageChange(callback: StorageChangeCallback): () => void {
+    // 添加到监听器集合
+    this.listeners.add(callback)
+    
     const handler = (
       event: CustomEvent<{ key: string; value: unknown; action: StorageAction }>
     ) => {
@@ -321,8 +312,23 @@ export class StorageManager {
 
     // 返回取消监听的函数
     return () => {
+      this.listeners.delete(callback)
       window.removeEventListener('ve-storage-change', handler as EventListener)
     }
+  }
+
+  /**
+   * 清理所有监听器
+   */
+  clearAllListeners(): void {
+    this.listeners.clear()
+  }
+
+  /**
+   * 获取活跃监听器数量
+   */
+  getListenerCount(): number {
+    return this.listeners.size
   }
 
   /**
@@ -452,8 +458,7 @@ function safeJsonParse(value: string): unknown | undefined {
   try {
     return JSON.parse(value) as unknown
   } catch (error) {
-    console.warn('存储数据解析失败，返回原始值:', error)
-    return undefined
+    throw new Error(`存储数据解析失败: ${error instanceof Error ? error.message : '未知错误'}`)
   }
 }
 
@@ -537,6 +542,20 @@ export const storage = {
    */
   onChange: (callback: StorageChangeCallback): (() => void) => {
     return storageManager.onStorageChange(callback)
+  },
+
+  /**
+   * 清理所有监听器。
+   */
+  clearAllListeners: (): void => {
+    storageManager.clearAllListeners()
+  },
+
+  /**
+   * 获取活跃监听器数量。
+   */
+  getListenerCount: (): number => {
+    return storageManager.getListenerCount()
   },
 
   /**

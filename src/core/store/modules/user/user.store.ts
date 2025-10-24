@@ -182,24 +182,44 @@ export function createUserStore(options: UserStoreOptions = {}) {
   
   const store = useUserStore()
   
+  // 资源管理
+  let intervalId: NodeJS.Timeout | null = null
+  let unsubscribe: (() => void) | null = null
+  
   if (autoSync) {
-    // 启动自动同步
-    const unsubscribe = store.startAuthSync()
-    
-    // 设置定时同步
-    const intervalId = setInterval(() => {
-      store.syncFromAuth()
-    }, syncInterval)
-    
-    // 返回清理函数
-    return {
-      store,
-      cleanup: () => {
-        unsubscribe()
-        clearInterval(intervalId)
-      }
+    try {
+      // 启动自动同步
+      unsubscribe = store.startAuthSync()
+      
+      // 设置定时同步
+      intervalId = setInterval(() => {
+        try {
+          store.syncFromAuth()
+        } catch (error) {
+          throw new Error(`定时同步失败: ${error instanceof Error ? error.message : '未知错误'}`)
+        }
+      }, syncInterval)
+    } catch (error) {
+      throw new Error(`启动用户Store同步失败: ${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
   
-  return { store, cleanup: () => {} }
+  // 返回清理函数
+  return {
+    store,
+    cleanup: () => {
+      try {
+        if (unsubscribe) {
+          unsubscribe()
+          unsubscribe = null
+        }
+        if (intervalId) {
+          clearInterval(intervalId)
+          intervalId = null
+        }
+      } catch (error) {
+        throw new Error(`清理用户Store资源失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      }
+    }
+  }
 }
