@@ -4,7 +4,7 @@
  */
 
 import { auth } from './index'
-import { useUserStore } from '@/core/store/modules/user'
+// import { useUserStore } from '@/core/store/modules/user'
 
 /**
  * 初始化认证系统
@@ -17,6 +17,6 @@ export function initAuth(): void {
   
   // 2. 获取UserStore实例并恢复状态
   // 此时 Pinia 已经初始化完成，可以安全使用
-  const userStore = useUserStore()
-  userStore.restoreFromAuth()
+  // const userStore = useUserStore()
+  // userStore.startAuthSync()
 }
